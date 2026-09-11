@@ -1,0 +1,63 @@
+{
+  "name": "nutrition-agent",
+  "version": "1.0.0",
+  "description": "AI-powered nutrition assistant — food search, macro tracking, and dietary recommendations",
+  "homepage": "index.html",
+  "author": "IBM EDUNet Foundation Internship",
+  "license": "MIT",
+  "keywords": ["nutrition", "health", "food", "calories", "macros", "diet", "IBM", "EDUNet"],
+  "config": {
+    "watsonAssistant": {
+      "integrationID": "044a77d8-9949-41db-ac2f-e9848cfa00b0",
+      "region": "au-syd",
+      "serviceInstanceID": "02d75de9-80e8-4886-a05b-f7d5f94350d7",
+      "clientVersion": "latest",
+      "note": "Credentials from IBM Watson Assistant → Integrations → Web chat → Embed tab"
+    },
+    "api": {
+      "openFoodFacts": {
+        "baseUrl": "https://world.openfoodfacts.org",
+        "searchEndpoint": "/api/v2/search",
+        "productEndpoint": "/api/v2/product",
+        "pageSize": 8,
+        "userAgent": "NutritionAgent/1.0 (IBM EDUNet Internship)"
+      }
+    },
+    "dailyGoals": {
+      "calories": 2000,
+      "protein_g": 50,
+      "carbs_g": 275,
+      "fat_g": 78,
+      "fiber_g": 28,
+      "sugar_g": 50
+    },
+    "theme": {
+      "default": "light",
+      "storageKey": "nutrition-agent-theme"
+    },
+    "storage": {
+      "mealLogKey": "nutrition-agent-meal-log",
+      "goalsKey": "nutrition-agent-goals"
+    },
+    "ui": {
+      "maxSearchResults": 8,
+      "defaultServing_g": 100,
+      "toastDuration_ms": 3000
+    }
+  },
+  "nutriScoreColors": {
+    "A": "#038141",
+    "B": "#85BB2F",
+    "C": "#FECB02",
+    "D": "#EE8100",
+    "E": "#E63E11"
+  },
+  "macroColors": {
+    "calories": "#3b82f6",
+    "protein": "#10b981",
+    "carbs":   "#f59e0b",
+    "fat":     "#ef4444",
+    "fiber":   "#8b5cf6",
+    "sugar":   "#ec4899"
+  }
+}
