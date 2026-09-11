@@ -1,0 +1,27 @@
+{
+  "name": "nutrition-agent",
+  "version": "1.0.0",
+  "description": "AI-powered nutrition assistant — food search, macro tracking, and dietary recommendations",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "nutrition",
+    "health",
+    "food",
+    "calories",
+    "macros",
+    "diet",
+    "IBM",
+    "EDUNet",
+    "watson",
+    "granite"
+  ],
+  "author": "IBM EDUNet Foundation Internship",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
