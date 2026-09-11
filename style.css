@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nutrition Agent — IBM EDUNet Internship</title>
+  <meta name="description" content="AI-powered nutrition assistant: search foods, track daily macros, and get dietary tips." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────── -->
+<header class="app-header">
+  <a class="brand" href="#">
+    🥗 <span>Nutrition</span> Agent
+  </a>
+  <div class="header-actions">
+    <span style="font-size:12px;color:var(--muted)">Powered by Open Food Facts &amp; IBM Granite</span>
+    <button class="btn-watson" id="ai-chat-btn" onclick="toggleAIChat()" title="Ask your AI nutrition coach">
+      🤖 Ask AI Coach
+    </button>
+    <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">🌙 Dark</button>
+  </div>
+</header>
+
+<!-- ── Quick Access Cards ──────────────────────────────────── -->
+<section class="quick-access">
+  <div class="quick-access-inner">
+    <h2 class="quick-access-title">How can we help you today?</h2>
+    <div class="quick-access-grid">
+
+      <div class="qa-card" onclick="openFeatureModal('diet')">
+        <div class="qa-card-icon" style="background:#eff6ff;color:#2563eb">🥦</div>
+        <div class="qa-card-body">
+          <div class="qa-card-name">Diet Plan</div>
+          <div class="qa-card-desc">Get a personalized meal plan tailored to your calorie goals and nutrition needs.</div>
+        </div>
+        <span class="qa-card-arrow">→</span>
+      </div>
+
+      <div class="qa-card" onclick="openFeatureModal('tips')">
+        <div class="qa-card-icon" style="background:#f0fdf4;color:#16a34a">💡</div>
+        <div class="qa-card-body">
+          <div class="qa-card-name">Nutrition Tips</div>
+          <div class="qa-card-desc">Discover smart eating habits, macro balance tips, and daily dietary advice.</div>
+        </div>
+        <span class="qa-card-arrow">→</span>
+      </div>
+
+      <div class="qa-card" onclick="openFeatureModal('doctor')">
+        <div class="qa-card-icon" style="background:#fdf4ff;color:#9333ea">🩺</div>
+        <div class="qa-card-body">
+          <div class="qa-card-name">Doctor Consult</div>
+          <div class="qa-card-desc">Get guidance on when to seek professional medical or dietary advice.</div>
+        </div>
+        <span class="qa-card-arrow">→</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── Main ────────────────────────────────────────────────── -->
+<main class="main-container">
+
+  <!-- ── Left Column ──────────────────────────────────────── -->
+  <div>
+
+    <!-- Search Card -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title">🔍 Search Food</div>
+      <div class="search-wrap">
+        <input
+          type="text"
+          id="search-input"
+          placeholder="e.g. banana, oats, grilled chicken…"
+          autocomplete="off"
+        />
+        <button class="btn btn-primary" id="search-btn" onclick="handleSearch()">Search</button>
+      </div>
+      <div id="search-results">
+        <p class="empty-state">Type a food name above and press Search.</p>
+      </div>
+    </div>
+
+    <!-- Tips Card -->
+    <div class="card">
+      <div class="card-title">💡 Dietary Tips</div>
+      <div id="tips-content">
+        <div class="tip info">👋 Search for a food item above and add it to your daily log to get started.</div>
+      </div>
+    </div>
+
+  </div><!-- /left -->
+
+  <!-- ── Right Column ─────────────────────────────────────── -->
+  <div>
+
+    <!-- Daily Tracker -->
+    <div class="card" style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <span class="card-title" style="margin:0">📊 Daily Tracker</span>
+        <button class="btn btn-ghost btn-sm" onclick="toggleGoals()">⚙️ Goals</button>
+      </div>
+
+      <!-- Goals Editor (hidden by default) -->
+      <div id="goals-panel" style="display:none;margin-bottom:16px;padding:14px;background:var(--surface2);border-radius:8px">
+        <div class="card-title" style="margin-bottom:10px">Edit Daily Goals</div>
+        <div id="goals-form"></div>
+      </div>
+
+      <div id="tracker-content">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Meal Log -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <span class="card-title" style="margin:0">📋 Meal Log</span>
+        <button class="btn btn-ghost btn-sm" onclick="clearLog()">🗑️ Clear</button>
+      </div>
+      <div id="meal-log-list">
+        <p class="empty-state">No meals logged yet.</p>
+      </div>
+      <!-- What to Eat suggestions -->
+      <div id="meal-suggestions" style="margin-top:16px"></div>
+    </div>
+
+  </div><!-- /right -->
+
+</main>
+
+<!-- ── Footer ──────────────────────────────────────────────── -->
+<footer>
+  IBM EDUNet Foundation Internship &nbsp;·&nbsp; Nutrition Agent v1.0 &nbsp;·&nbsp;
+  Data from <a href="https://world.openfoodfacts.org" target="_blank" style="color:var(--accent)">Open Food Facts</a>
+  (ODbL License)
+</footer>
+
+<!-- ── Nutrition Detail Modal ──────────────────────────────── -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-title"></div>
+        <div class="modal-brand" id="modal-brand"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="nutri-score" id="modal-score"></div>
+        <button class="close-btn" onclick="closeModal()">✕</button>
+      </div>
+    </div>
+
+    <div class="nutrient-grid" id="modal-nutrients">
+      <!-- Rendered by JS -->
+    </div>
+
+    <hr class="divider" />
+
+    <div class="serving-row">
+      <label for="serving-input">Serving size (g):</label>
+      <input type="number" id="serving-input" value="100" min="1" max="2000" />
+      <span class="text-muted text-sm">per serving</span>
+    </div>
+
+    <button class="btn btn-primary w-full" onclick="addFromModal()">
+      ➕ Add to Meal Log
+    </button>
+  </div>
+</div>
+
+<!-- ── Feature Response Modal ──────────────────────────────── -->
+<div class="modal-overlay" id="feature-modal-overlay">
+  <div class="modal feature-modal">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="qa-card-icon" id="feature-modal-icon"></div>
+        <div>
+          <div class="modal-title" id="feature-modal-title"></div>
+          <div class="modal-brand" id="feature-modal-subtitle"></div>
+        </div>
+      </div>
+      <button class="close-btn" onclick="closeFeatureModal()">✕</button>
+    </div>
+    <div id="feature-modal-body"></div>
+    <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-primary w-full" onclick="closeFeatureModal();toggleAIChat()">
+        🤖 Ask AI Coach for personalised advice
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Built-in AI Chat Panel (Granite-style Q&A) ───────────── -->
+<div id="ai-chat-panel" class="ai-chat-panel">
+  <div class="ai-chat-header">
+    <div>
+      <div style="font-weight:700;font-size:15px">🤖 AI Nutrition Coach</div>
+      <div style="font-size:11px;color:var(--muted)">Powered by IBM Granite</div>
+    </div>
+    <button class="close-btn" onclick="toggleAIChat()">✕</button>
+  </div>
+  <div class="ai-chat-messages" id="ai-chat-messages">
+    <div class="ai-msg bot">
+      <div class="ai-msg-bubble">
+        👋 Hello! I'm your AI Nutrition Coach powered by IBM Granite.<br><br>
+        Ask me about <strong>diet plans</strong>, <strong>nutrition tips</strong>,
+        <strong>calories</strong>, <strong>protein</strong>, or any food-related question!
+      </div>
+    </div>
+  </div>
+  <div class="ai-chat-input-row">
+    <input type="text" id="ai-chat-input" placeholder="Ask a nutrition question…" autocomplete="off"
+           onkeydown="if(event.key==='Enter') sendAIMessage()" />
+    <button class="btn btn-primary btn-sm" onclick="sendAIMessage()">Send</button>
+  </div>
+</div>
+
+<!-- ── Toast ────────────────────────────────────────────────── -->
+<div id="toast"></div>
+
+<!-- ── Scripts ──────────────────────────────────────────────── -->
+<script src="app.js"></script>
+
+<!-- ── IBM Watson Assistant Web Chat (Granite LLM) ──────────── -->
+<script>
+  window.watsonAssistantChatOptions = {
+    integrationID: "044a77d8-9949-41db-ac2f-e9848cfa00b0",
+    region: "au-syd",
+    serviceInstanceID: "02d75de9-80e8-4886-a05b-f7d5f94350d7",
+
+    // Customise the chat header
+    headerConfig: {
+      primaryHeaderTitle: "AI Nutrition Coach",
+      secondaryHeaderTitle: "Powered by IBM Granite"
+    },
+
+    onLoad: async (instance) => {
+      window._watsonInstance = instance;
+
+      // ── Inject nutrition system context on every outgoing message ──
+      // This tells the Granite LLM to act as a nutrition expert.
+      instance.on({
+        type: 'pre:send',
+        handler: function(event) {
+          event.data.context = event.data.context || {};
+          event.data.context.skills = event.data.context.skills || {};
+          event.data.context.skills['action skill'] = event.data.context.skills['action skill'] || {};
+          event.data.context.skills['action skill'].skill_variables =
+            event.data.context.skills['action skill'].skill_variables || {};
+
+          // Pass the user's current nutrition data so Granite can personalise advice
+          var totals = window._nutritionTotals || {};
+          event.data.context.skills['action skill'].skill_variables.user_calories  = totals.calories  || 0;
+          event.data.context.skills['action skill'].skill_variables.user_protein   = totals.protein   || 0;
+          event.data.context.skills['action skill'].skill_variables.user_carbs     = totals.carbs     || 0;
+          event.data.context.skills['action skill'].skill_variables.user_fat       = totals.fat       || 0;
+          event.data.context.skills['action skill'].skill_variables.assistant_role =
+            'You are an expert AI Nutrition Coach powered by IBM Granite. ' +
+            'Help users with personalised diet plans, nutrition tips, macro tracking, ' +
+            'healthy eating habits, and general dietary advice. ' +
+            'Be concise, friendly, evidence-based, and always recommend consulting a ' +
+            'doctor for medical concerns.';
+        }
+      });
+
+      await instance.render();
+    }
+  };
+
+  setTimeout(function(){
+    const t = document.createElement('script');
+    t.src = "https://web-chat.global.assistant.watson.appdomain.cloud/versions/" +
+            (window.watsonAssistantChatOptions.clientVersion || 'latest') +
+            "/WatsonAssistantChatEntry.js";
+    document.head.appendChild(t);
+  });
+</script>
+
+</body>
+</html>
